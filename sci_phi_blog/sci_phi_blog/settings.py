@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'home.apps.HomeConfig',
     'django.contrib.staticfiles',
     'django_extensions',
     'crispy_forms',
@@ -43,6 +44,8 @@ INSTALLED_APPS = [
     'social_django',
     'taggit',
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
