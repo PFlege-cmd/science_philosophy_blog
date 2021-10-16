@@ -9,6 +9,11 @@
 
 <meta name="dj4e-code" content="42163123647402">
 
+    {% load static %}
+    <link rel="stylesheet"
+          href="{% static 'styles.css' %}"
+          type="text/css">
+
 <link rel="stylesheet"
     href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css"
     crossorigin="anonymous">
@@ -42,7 +47,7 @@
 </head>
 <body>
 <div class="container">
-{% block navbar %} {% endblock %}
+{% block navbar_and_content %} {% endblock %}
 {% block welcome %} {% endblock %}
 {% block messages %}
     {% if messages %}
@@ -53,8 +58,7 @@
     {% endfor %}
     {% endif %}
 {% endblock %}
-{% block content %}
-{% endblock %}
+
 </div>
 {% block footer %} {% endblock %}
 </body>

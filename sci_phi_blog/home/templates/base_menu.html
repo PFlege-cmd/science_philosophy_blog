@@ -1,7 +1,7 @@
 {% extends "base_bootstrap.html" %}
-{% block navbar %}
+{% block navbar_and_content %}
 {% load app_tags %}
-<nav class="navbar navbar-default navbar-inverse">
+<nav class="navbar navbar-default navbar-inverse" style="z-index: 999;">
   <div class="container-fluid">
     <div class="navbar-header">
         <a class="navbar-brand" href="/">{{ settings.APP_NAME }}</a>
@@ -11,6 +11,8 @@
       {% url 'ads' as ads %}
       <li {% if request.get_full_path == ads %}class="active"{% endif %}>
           <a href="#">Ads</a></li>
+        <li {% if request.get_full_path == ads %}class="active"{% endif %}>
+          <a href="{% url 'about' %}">About</a></li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
         {% if user.is_authenticated %}
@@ -33,4 +35,18 @@
     </ul>
   </div>
 </nav>
+<div class="wrapper" style="width: 100%; display: flex; float: left;">
+    <nav id="sidebar" class="navbar" style="height: 100vh; background: #7386D5; color: #fff; width: 150px; left: 100; position: fixed;">
+        <ul class="nav navbar-nav" id="left_bar">
+          <li {% if request.get_full_path == ads %}class="active"{% endif %}>
+              <a href="#">Shizzm</a></li>
+            <li {% if request.get_full_path == ads %}class="active"{% endif %}>
+              <a href="#">Gomorrha</a></li>
+        </ul>
+    </nav>
+</div>
+<div id="content">
+    {% block content %} {% endblock %}
+</div>
+
 {% endblock %}

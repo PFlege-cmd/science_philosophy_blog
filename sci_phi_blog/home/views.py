@@ -5,3 +5,6 @@ from django.views.generic import TemplateView
 
 class MainView(TemplateView):
     template_name = "home\\main.html";
+
+class AboutView(TemplateView):
+    template_name = "home\\about.html";

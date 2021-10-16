@@ -1,0 +1,26 @@
+.wrapper{
+    width: 100%;
+    display: flex;
+    float: left;
+}
+
+#sidebar{
+    height: 100vh;
+    background: #7386D5;
+    color: #fff;
+    width: 150px;
+    top: 0;
+    left: 100;
+    position: fixed;
+    z-index: 10;
+}
+
+#left_bar {
+    top: 150px;
+}
+
+#content{
+    display: flex;
+    width: 75%;
+    float: right;
+}
