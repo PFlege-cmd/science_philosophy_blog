@@ -1,4 +1,8 @@
 {% extends "base_menu.html" %}
 {% block content %}
+{% if user.is_superuser %}
+  <p>Sexy</p>
+{% else %}
   <p>Hey</p>
+{% endif %}
 {% endblock content %}

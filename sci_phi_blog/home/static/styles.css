@@ -15,8 +15,11 @@
     z-index: 10;
 }
 
-#left_bar {
+#left_navbar_div {
+    position: relative;
     top: 150px;
+    background: #7386D5;
+    color: #fff;
 }
 
 #content{

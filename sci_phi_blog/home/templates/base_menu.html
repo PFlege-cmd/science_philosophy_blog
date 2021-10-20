@@ -36,13 +36,15 @@
   </div>
 </nav>
 <div class="wrapper" style="width: 100%; display: flex; float: left;">
-    <nav id="sidebar" class="navbar" style="height: 100vh; background: #7386D5; color: #fff; width: 150px; left: 100; position: fixed;">
-        <ul class="nav navbar-nav" id="left_bar">
-          <li {% if request.get_full_path == ads %}class="active"{% endif %}>
-              <a href="#">Shizzm</a></li>
-            <li {% if request.get_full_path == ads %}class="active"{% endif %}>
-              <a href="#">Gomorrha</a></li>
-        </ul>
+    <nav id="sidebar" class="navbar-nav navbar-right nav" style="height: 100vh; background: #7386D5; color: #fff; width: 150px; left: 100; position: fixed;">
+        <div id="left_navbar_div">
+            <ul class="nav navbar-nav" id="left_bar">
+              <li {% if request.get_full_path == ads %}class="active"{% endif %}>
+                  <a href="#">Shizzm</a></li>
+                <li {% if request.get_full_path == ads %}class="active"{% endif %}>
+                  <a href="#">Gomorrha</a></li>
+            </ul>
+        </div>
     </nav>
 </div>
 <div id="content">
