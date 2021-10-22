@@ -24,5 +24,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('home.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('user/', include('accs.urls')),
     path('accounts/profile/', views.profile_redirect, name='profile_redirect'),
 ]

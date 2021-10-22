@@ -41,8 +41,8 @@
             <ul class="nav navbar-nav" id="left_bar">
               <li {% if request.get_full_path == ads %}class="active"{% endif %}>
                   <a href="#">Shizzm</a></li>
-                <li {% if request.get_full_path == ads %}class="active"{% endif %}>
-                  <a href="#">Gomorrha</a></li>
+                <li {% if request.get_full_path == ads and request.user.is_superuser %}class="active"{% endif %}>
+                  <a href="{% url 'create_user' %}">User</a></li>
             </ul>
         </div>
     </nav>

@@ -2,6 +2,7 @@ from django import forms
 from .models import Account
 
 
-class UserForm(forms.ModelForm):
+class AccountForm(forms.ModelForm):
     class Meta:
-        Model = Account
+        model = Account
+        fields = ['email', 'username','password', 'is_admin', 'is_staff']
