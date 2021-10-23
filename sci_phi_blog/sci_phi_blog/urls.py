@@ -17,6 +17,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 app_name = "home"
 
@@ -25,5 +27,6 @@ urlpatterns = [
     path('', include('home.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('user/', include('accs.urls')),
+    path('articles/', include('arts.urls')),
     path('accounts/profile/', views.profile_redirect, name='profile_redirect'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

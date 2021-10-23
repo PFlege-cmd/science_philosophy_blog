@@ -1,0 +1,13 @@
+{% extends "base_menu.html" %}
+{% block content %}
+<h1>Arts</h1>
+{% if article_list %}
+<ul>
+  {% for art in article_list %}
+    <li>
+        <p>{{art.title}}</p>
+    </li>
+    {% endfor %}
+    {% endif %}
+{% endblock %}
+</ul>
