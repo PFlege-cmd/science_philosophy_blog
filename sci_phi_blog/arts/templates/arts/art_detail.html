@@ -1,0 +1,20 @@
+{% extends "base_menu.html" %}
+{% block title %}
+    {{art.title}}
+{% endblock %}
+
+{% block content %}
+<div>
+    <h3>{{ art.title }}</h3>
+    <br/>
+    <br/>
+    <p style="font-size: small; color: blue;">{{ art.text }}</p>
+    <br/>
+        <hr style="width:50%;text-align:left;margin-left:0">
+    <br/>
+    {% if user == art.author %}
+    <a href="{% url 'arts:update_article' art.id%}"><i class="fa fa-pencil"></i></a>
+    <a href="{% url 'arts:delete_article' art.id%}"><i class="fa fa-trash"></i></a>
+    {% endif %}
+</div>
+{% endblock %}

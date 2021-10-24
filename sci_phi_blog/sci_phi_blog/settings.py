@@ -28,6 +28,7 @@ ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = 'accs.Account'
 
+APP_NAME = 'Kermelin'
 # Application definition
 
 INSTALLED_APPS = [

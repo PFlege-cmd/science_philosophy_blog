@@ -1,13 +1,24 @@
 {% extends "base_menu.html" %}
-{% block content %}
-<h1>Arts</h1>
-{% if article_list %}
-<ul>
-  {% for art in article_list %}
-    <li>
-        <p>{{art.title}}</p>
-    </li>
-    {% endfor %}
-    {% endif %}
+
+{% block title %}
+Articles
 {% endblock %}
-</ul>
+{% block content %}
+
+<div class="col-md-7 float-right">
+  <h1>Arts</h1>
+    {% if article_list %}
+    <ul>
+      {% for art in article_list %}
+        <li>
+            <p>{{art.title}} - {{art.language}}<a href = "{% url 'arts:article' art.id %}">more</a> </p>
+          {% if user == art.author %}
+          <a href="{% url 'arts:update_article' art.id%}"><i class="fa fa-pencil"></i></a>
+          <a href="{% url 'arts:delete_article' art.id%}"><i class="fa fa-trash"></i></a>
+          {% endif %}
+        </li>
+        {% endfor %}
+        {% endif %}
+    {% endblock %}
+    </ul>
+</div>
