@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
-from .models import Article
+from .models import Article, Languages, Categories
 from .forms import ArticleForm
 
 
@@ -51,14 +51,12 @@ class ArticleListView(LoginRequiredMixin, ListView):
 
         return qs
 
-
-
-
 class ArticleDetailView(LoginRequiredMixin, DetailView):
     model = Article
     template_name = 'arts/art_detail.html'
+
     def get(self, request, **kwargs):
-        art = Article.objects.get(id=kwargs.get('pk'))
+        art = Article.objects.get(id=self.kwargs.get('pk'))
         ctx = {"art" : art}
         return render(request, self.template_name, ctx)
 
@@ -95,5 +93,31 @@ class ArticleDeleteView(LoginRequiredMixin, DeleteView):
     def get_queryset(self):
         qs = super(DeleteView, self).get_queryset()
         return qs.filter(author=self.request.user)
+
+#class CategoryView(LoginRequiredMixin, ListView):
+#    model = Languages;
+#    template_name = "arts/category_list.html"
+
+def show_categories(request):
+
+    cats = Categories.choices()
+    cats_list = []
+
+    for cat in cats:
+        cats_list.append(cat[0])
+
+    ctx = {"categories": cats_list}
+    return render(request, 'arts/category_list.html', ctx)
+
+def show_languages(request):
+    langs = Languages.choices()
+    lang_list = []
+
+    for lang in langs:
+        lang_list.append(lang[0])
+
+    ctx = {"languages": lang_list}
+    return render(request, 'arts/language_list.html', ctx)
+
 
 

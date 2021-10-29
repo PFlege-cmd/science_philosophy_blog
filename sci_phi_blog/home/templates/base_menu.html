@@ -18,19 +18,26 @@ Kermeline...
           <a href="{% url 'about' %}">About</a></li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
+        <li class="nav-item">
+            <a href="{% url 'arts:categories' %}">Categories</a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'arts:languages' %}">Languages</a>
+        </li>
         {% if user.is_authenticated %}
         <li class="nav-item">
         <a href="#">Create Ad</a>
         </li>
         <li class="nav-item">
-            <div id="searchbar" class="col-xs-7 float-left">
+            <div>
               <form action="{% url 'arts:all' %}" method = "get">
-                <input type="text" placeholder="search..." name="search">
-                <input type="submit"
-                       class="btn btn-success float-right"
-                       value="Browse">
-                  <i class="fa fa-search"></i>
-                  <a href="{% url 'arts:all' %}"><i class="fa fa-undo"></i></a>
+
+                    <input type="text" placeholder="search..." name="search" style="float: left">
+                    <input type="submit"
+                           class="btn btn-success float-right"
+                           value="Browse" style="float: left">
+                      <i class="fa fa-search"></i>
+                      <a href="{% url 'arts:all' %}"><i class="fa fa-undo"></i></a>
               </form>
             </div>
         </li>
@@ -46,6 +53,9 @@ Kermeline...
         {% else %}
         <li>
         <a href="{% url 'login' %}?next=#">Login</a>
+        </li>
+        <li>
+            <a href="{% url 'register' %}?next={% url 'login' %}">Register</a>
         </li>
         {% endif %}
     </ul>

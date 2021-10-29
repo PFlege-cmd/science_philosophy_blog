@@ -11,11 +11,14 @@ Articles
     <ul>
       {% for art in article_list %}
         <li>
-            <p>{{art.title}} - {{art.language}}<a href = "{% url 'arts:article' art.id %}">more</a> </p>
+          {{art.title}} - {{art.language}}<a href = "{% url 'arts:article' art.id %}">more</a>
+          <br/>
           {% if user == art.author %}
           <a href="{% url 'arts:update_article' art.id%}"><i class="fa fa-pencil"></i></a>
           <a href="{% url 'arts:delete_article' art.id%}"><i class="fa fa-trash"></i></a>
           {% endif %}
+          <br/>
+          {{ art.text|slice:":50"|safe}}
         </li>
         {% endfor %}
         {% endif %}

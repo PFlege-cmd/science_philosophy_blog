@@ -4,6 +4,7 @@
 <form action="{% url 'arts:create_article' %}" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
+    {{ form.media }}
     <input type="submit" onclick="console.log('clicked');">
 </form>
 {% endblock %}

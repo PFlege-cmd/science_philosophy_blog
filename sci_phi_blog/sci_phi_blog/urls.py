@@ -25,8 +25,8 @@ app_name = "home"
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('home.urls')),
-    path('accounts/', include('django.contrib.auth.urls')),
+    path('user/', include('django.contrib.auth.urls')),
     path('user/', include('accs.urls')),
     path('articles/', include('arts.urls')),
-    path('accounts/profile/', views.profile_redirect, name='profile_redirect'),
+    path('user/profile/', views.profile_redirect, name='profile_redirect'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

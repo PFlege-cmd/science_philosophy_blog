@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'social_django',
     'taggit',
+    'ckeditor',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
@@ -149,3 +150,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTHENTICATION_BACKENDS = (
     ('django.contrib.auth.backends.ModelBackend'),
 )
+
+LOGIN_URL = '/user/login'
+LOGIN_REDIRECT_URL ='/about/'
+LOGOUT_REDIRECT_URL ='/'
