@@ -1,9 +1,10 @@
+from django.contrib.auth.forms import UserChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import render, redirect
 from django.views import View
-from django.views.generic import CreateView
+from django.views.generic import CreateView, UpdateView
 from .models import Account
 from .forms import AccountForm, RegisterForm
 from django.contrib.auth.hashers import make_password
@@ -28,6 +29,15 @@ class UserCreateView(LoginRequiredMixin, CreateView):
 
         else:
             return HttpResponse("Invalid input")
+
+class UserChangeView(LoginRequiredMixin, UpdateView):
+    model = Account
+    form_class = UserChangeForm
+    template_name = 'accs/acc_edit.html'
+    success_url = reverse_lazy('about')
+
+    def get_object(self):
+        return self.request.user;
 
 class UserRegisterView(CreateView):
     model = Account

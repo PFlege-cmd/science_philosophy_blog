@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
@@ -118,6 +118,19 @@ def show_languages(request):
 
     ctx = {"languages": lang_list}
     return render(request, 'arts/language_list.html', ctx)
+
+class ArticleByLanguageView(ListView):
+    model = Article
+
+    def get(self, request, lang):
+        articles_with_language = Article.objects.filter(language=lang)
+        article_dict = {}
+
+        for article in articles_with_language:
+            article_dict[article.id] = article.title
+
+        return JsonResponse(article_dict)
+
 
 
 

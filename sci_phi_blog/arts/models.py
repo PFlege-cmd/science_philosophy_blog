@@ -42,6 +42,7 @@ class Article(models.Model):
     category = models.CharField(choices=Categories.choices(), default=Categories.GENERAL, max_length=50)
     background_picture = models.ImageField(null = True, blank=True, upload_to='images/')
     responses = models.ManyToManyField(Account, through='Response', related_name="responded_to")
+    snippet = models.CharField(max_length=255)
 
 
 class Picture(models.Model):
