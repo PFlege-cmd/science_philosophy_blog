@@ -5,7 +5,7 @@
 <title>{% block title %}{{ settings.APP_NAME }}{% endblock %}</title>
 
 <!-- Replace this value (42-42) with the one provided by the autograder -->
-<meta name="dj4e" content="14318e2a43a225fc24ab55f3c0122cf0">
+<meta name="dj4e" content="14318e2a43a225fc24ab55f3c0122cf0" charset="UTF-8">
 
 <meta name="dj4e-code" content="42163123647402">
 
@@ -46,7 +46,8 @@
 
 </head>
 <body>
-<div class="container">
+<div class="container-fluid" style="padding-right: 0px;
+                padding-left: 0px;">
 {% block navbar_and_content %} {% endblock %}
 {% block welcome %} {% endblock %}
 {% block messages %}

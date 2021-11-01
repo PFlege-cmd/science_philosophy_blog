@@ -74,8 +74,14 @@ class ArticleUpdateView(LoginRequiredMixin, UpdateView):
     def post(self, request, pk=None):
         form = ArticleForm(request.POST)
         if form.is_valid():
-            art = form.save(commit=False)
-            art.author = self.request.user
+            art = get_object_or_404(Article, id=pk, author=self.request.user)
+            art.title = request.POST["title"]
+            art.text = request.POST["text"]
+            art.language = request.POST["language"]
+            art.category = request.POST["category"]
+            art.snippet = request.POST["snippet"]
+            art.background_picture = request.POST["background_picture"]
+
             art.save()
             return redirect(reverse('arts:all'))
 

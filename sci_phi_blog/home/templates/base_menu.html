@@ -4,16 +4,13 @@ Kermeline...
 {% endblock %}
 {% block navbar_and_content %}
 {% load app_tags %}
-<nav class="navbar navbar-default navbar-inverse" style="z-index: 999;">
+<nav class="navbar navbar-default navbar-inverse mw-100" style="z-index: 999;">
   <div class="container-fluid">
     <div class="navbar-header">
         <a class="navbar-brand" href="/">{{ settings.APP_NAME }}</a>
     </div>
     <!-- https://stackoverflow.com/questions/22047251/django-dynamically-get-view-url-and-check-if-its-the-current-page -->
     <ul class="nav navbar-nav">
-      {% url 'ads' as ads %}
-      <li {% if request.get_full_path == ads %}class="active nav-item"{% endif %}>
-          <a href="#">Ads</a></li>
         <li {% if request.get_full_path == ads %}class="active nav-item"{% endif %}>
           <a href="{% url 'about' %}">About</a></li>
     </ul>
@@ -32,7 +29,7 @@ Kermeline...
             <div>
               <form action="{% url 'arts:all' %}" method = "get">
 
-                    <input type="text" placeholder="search..." name="search" style="float: left">
+                    <input type="text" placeholder="search..." name="search" style="float: left" class="form-control">
                     <input type="submit"
                            class="btn btn-success float-right"
                            value="Browse" style="float: left">
@@ -64,7 +61,7 @@ Kermeline...
 </nav>
 </div>
 <div class="wrapper" style="width: 100%; display: flex; float: left;">
-    <nav id="sidebar" class="navbar-nav navbar-right nav" style="height: 100vh; background: #7386D5; color: #fff; width: 150px; left: 100; position: fixed;">
+    <nav id="sidebar" class="navbar-nav navbar-right nav" style="height: 100vh; background: #24252B; color: #fff; width: 150px; left: 100; position: fixed;">
         <div id="left_navbar_div">
             <ul class="nav navbar-nav" id="left_bar">
               <li {% if request.get_full_path == ads %}class="active"{% endif %}>
@@ -77,7 +74,7 @@ Kermeline...
         </div>
     </nav>
 </div>
-<div id="content">
+<div id="content" class="container" style="flex-direction: column;" >
     {% block content %} {% endblock %}
 </div>
 

@@ -1,5 +1,6 @@
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.db import models
+from ckeditor.fields import RichTextField
 
 
 # Create your models here.
@@ -51,6 +52,16 @@ class Account(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return True
+
+class Profile(models.Model):
+    user = models.OneToOneField(Account, null=True, on_delete=models.CASCADE)
+    bio = RichTextField(null=True, blank = True)
+
+    facebook_url = models.CharField(max_length=255, null=True, blank=True)
+    twitter_url = models.CharField(max_length=255, null=True, blank=True)
+    instagram_url = models.CharField(max_length=255, null=True, blank=True)
+
+    picture = models.ImageField(null=True, blank=True, upload_to='media/images/profiles/')
 
 
 

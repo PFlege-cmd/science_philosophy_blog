@@ -1,12 +1,19 @@
 {% extends 'base_menu.html' %}
 {% block content %}
-    <ul>
-        {% for lang in languages %}
-        <li><a href="#" id="{{lang}}" onclick="funFunction('{{lang}}'); return false;">{{lang}}</a></li>
-        {% endfor %}
-    </ul>
+<div class="row" style="width: 100%;">
+    <div class="col-xs-12">
 
-    <script>
+        <ul style="list-style-type: none;">
+            {% for lang in languages %}
+            <li><a href="#" id="{{lang}}" onclick="funFunction('{{lang}}'); return false;">{{lang}}</a></li>
+            {% endfor %}
+        </ul>
+        <hr>
+        <div class="mw-100"></div>
+    </div>
+</div>
+
+    <script charset="UTF-16">
         function funFunction(lang){
             console.log(lang);
             fetch(`/articles/languages/${lang}`)
@@ -14,34 +21,36 @@
             .then(jsons => { destroy();
                 return jsons;})
             .then(jsons => {
+                        article_row = document.createElement("div");
+                        article_row.classList.add("row");
+                        article_row.classList.add("articles");
+
+                        article_col = document.createElement("div");
+                        article_col.classList.add("col-xs-12");
+
+
+                        article_list = document.createElement("ul");
                         jsons.forEach(json => {
                             console.log(json);
                             createArticle(json);
-                            });
+                                });
+                        article_col.appendChild(article_list);
+                        article_row.appendChild(article_col);
+
+                        document.getElementById("content").appendChild(article_row);
                             })
             .catch(error => console.log(error));
         }
 
         function createArticle(json){
-            previous_arts = document.getElementsByClassName("articles");
-            /*
-            if (previous_arts.length !== 0){
-                console.log(previous_arts);
-                for (let i = 0; i < previous_arts.length; i++){
-                    previous_arts[i].style.display = "none";
-                }
-            }*/
-            let article_div = document.createElement("div");
-            article_div.classList.add("articles");
-            article_div.classList.add("col-xs-12");
-            //article_div.style.width = "50px";
+            let article_li = document.createElement("div");
+
             let article_link = document.createElement("a");
             article_link.href = `/articles/article/${json.id}`;
             article_link.innerHTML = json.title;
 
-            article_div.appendChild(article_link);
-            document.getElementById("content").appendChild(article_div);
-
+            article_li.appendChild(article_link);
+            article_list.appendChild(article_li);
             console.log(json.title);
 
 
@@ -59,4 +68,5 @@
             }
         }
     </script>
+
 {% endblock %}

@@ -27,3 +27,17 @@
     width: 75%;
     float: right;
 }
+
+ul {
+    list-style-type: none;
+    width: 100%;
+}
+
+.container-fluid{
+    padding-right: 0px;
+    padding-left: 0px;
+}
+
+#content{
+    flex-direction: column;
+}
