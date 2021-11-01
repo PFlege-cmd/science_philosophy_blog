@@ -11,22 +11,30 @@
             console.log(lang);
             fetch(`/articles/languages/${lang}`)
             .then(r => r.json())
-            .then(json => {console.log(json);
-                    createArticle(json);})
+            .then(jsons => { destroy();
+                return jsons;})
+            .then(jsons => {
+                        jsons.forEach(json => {
+                            console.log(json);
+                            createArticle(json);
+                            });
+                            })
             .catch(error => console.log(error));
         }
 
         function createArticle(json){
             previous_arts = document.getElementsByClassName("articles");
+            /*
             if (previous_arts.length !== 0){
                 console.log(previous_arts);
                 for (let i = 0; i < previous_arts.length; i++){
                     previous_arts[i].style.display = "none";
                 }
-            }
+            }*/
             let article_div = document.createElement("div");
             article_div.classList.add("articles");
-            article_div.style.width = "50px";
+            article_div.classList.add("col-xs-12");
+            //article_div.style.width = "50px";
             let article_link = document.createElement("a");
             article_link.href = `/articles/article/${json.id}`;
             article_link.innerHTML = json.title;
@@ -38,6 +46,17 @@
 
 
 
+        }
+
+        function destroy(){
+            previous_arts = document.getElementsByClassName("articles");
+
+            if (previous_arts.length !== 0){
+                console.log(previous_arts);
+                for (let i = 0; i < previous_arts.length; i++){
+                    previous_arts[i].style.display = "none";
+                }
+            }
         }
     </script>
 {% endblock %}

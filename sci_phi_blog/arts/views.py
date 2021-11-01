@@ -124,13 +124,15 @@ class ArticleByLanguageView(ListView):
 
     def get(self, request, lang):
         articles_with_language = Article.objects.filter(language=lang)
-        article_dict = {}
+        article_list = []
 
         for article in articles_with_language:
+            article_dict = {}
             article_dict["id"] = article.id
             article_dict["title"] = article.title
+            article_list.append(article_dict);
 
-        return JsonResponse(article_dict)
+        return JsonResponse(article_list, safe=False)
 
 
 
