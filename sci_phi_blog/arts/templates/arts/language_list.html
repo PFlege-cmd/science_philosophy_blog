@@ -11,8 +11,33 @@
             console.log(lang);
             fetch(`/articles/languages/${lang}`)
             .then(r => r.json())
-            .then(json => {console.log(json);})
+            .then(json => {console.log(json);
+                    createArticle(json);})
             .catch(error => console.log(error));
+        }
+
+        function createArticle(json){
+            previous_arts = document.getElementsByClassName("articles");
+            if (previous_arts.length !== 0){
+                console.log(previous_arts);
+                for (let i = 0; i < previous_arts.length; i++){
+                    previous_arts[i].style.display = "none";
+                }
+            }
+            let article_div = document.createElement("div");
+            article_div.classList.add("articles");
+            article_div.style.width = "50px";
+            let article_link = document.createElement("a");
+            article_link.href = `/articles/article/${json.id}`;
+            article_link.innerHTML = json.title;
+
+            article_div.appendChild(article_link);
+            document.getElementById("content").appendChild(article_div);
+
+            console.log(json.title);
+
+
+
         }
     </script>
 {% endblock %}

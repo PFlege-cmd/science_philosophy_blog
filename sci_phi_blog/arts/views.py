@@ -127,7 +127,8 @@ class ArticleByLanguageView(ListView):
         article_dict = {}
 
         for article in articles_with_language:
-            article_dict[article.id] = article.title
+            article_dict["id"] = article.id
+            article_dict["title"] = article.title
 
         return JsonResponse(article_dict)
 

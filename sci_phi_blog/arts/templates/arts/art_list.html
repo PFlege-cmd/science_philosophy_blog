@@ -18,7 +18,7 @@ Articles
           <a href="{% url 'arts:delete_article' art.id%}"><i class="fa fa-trash"></i></a>
           {% endif %}
           <br/>
-          {{ art.text|slice:":50"|safe}}
+          {{ art.snippet|safe}}
         </li>
         {% endfor %}
         {% endif %}

@@ -20,6 +20,8 @@ from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 
+from accs.views import AccountChangePasswordView
+
 app_name = "home"
 
 urlpatterns = [
@@ -29,4 +31,5 @@ urlpatterns = [
     path('user/', include('accs.urls')),
     path('articles/', include('arts.urls')),
     path('user/profile/', views.profile_redirect, name='profile_redirect'),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('password/', AccountChangePasswordView.as_view(), name="password"),
+              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

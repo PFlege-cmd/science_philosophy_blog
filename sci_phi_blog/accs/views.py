@@ -1,12 +1,13 @@
 from django.contrib.auth.forms import UserChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import PasswordChangeView
 from django.http import HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import CreateView, UpdateView
 from .models import Account
-from .forms import AccountForm, RegisterForm
+from .forms import AccountForm, RegisterForm, AccountUpdateForm, PasswordsChangingForm
 from django.contrib.auth.hashers import make_password
 
 
@@ -16,8 +17,6 @@ class UserCreateView(LoginRequiredMixin, CreateView):
     template_name = "accs/acc_form.html"
 
     def post(self, request):
-
-
         acc_form = AccountForm(request.POST)
         if acc_form.is_valid():
             print(acc_form)
@@ -32,7 +31,7 @@ class UserCreateView(LoginRequiredMixin, CreateView):
 
 class UserChangeView(LoginRequiredMixin, UpdateView):
     model = Account
-    form_class = UserChangeForm
+    form_class = AccountUpdateForm
     template_name = 'accs/acc_edit.html'
     success_url = reverse_lazy('about')
 
@@ -64,3 +63,9 @@ class UserRegisterView(CreateView):
 
     #    else:
     #        return HttpResponse("Invalid")
+
+class AccountChangePasswordView(PasswordChangeView):
+    form_class = PasswordsChangingForm
+
+    success_url = reverse_lazy('about')
+    template_name = 'registration/password_change.html'
