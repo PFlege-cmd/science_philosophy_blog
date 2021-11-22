@@ -11,6 +11,7 @@ from django.views.generic import CreateView, UpdateView, DetailView
 from .models import Account, Profile
 from .forms import AccountForm, RegisterForm, AccountUpdateForm, PasswordsChangingForm, UserProfileForm
 from django.contrib.auth.hashers import make_password
+import json
 
 class CreateUserProfileView(CreateView):
     model = Profile
@@ -125,4 +126,5 @@ class SaveJSONView(View):
         return JsonResponse(bla);
 
     def post(self, request, pk):
+        print(str(json.loads(request.body)))
         return JsonResponse({});
