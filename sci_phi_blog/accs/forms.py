@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserChangeForm, PasswordChangeForm
 
-from .models import Account
+from .models import Account, Profile
 
 
 class AccountForm(forms.ModelForm):
@@ -43,5 +43,11 @@ class PasswordsChangingForm(PasswordChangeForm):
     class Meta:
         model = Account
         fields = ['old_password', 'new_password1', 'new_password2']
+
+class UserProfileForm(forms.ModelForm):
+
+    class Meta:
+        model = Profile
+        fields = ['bio', 'picture', 'facebook_url', 'twitter_url', 'instagram_url']
 
 

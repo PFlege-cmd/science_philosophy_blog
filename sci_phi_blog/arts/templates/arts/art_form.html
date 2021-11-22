@@ -5,6 +5,8 @@
     {% csrf_token %}
     {{ form.as_p }}
     {{ form.media }}
+    <input type="submit" value="Save" onclick="return false;">
     <input type="submit" onclick="console.log('clicked');">
 </form>
-{% endblock %}
+
+

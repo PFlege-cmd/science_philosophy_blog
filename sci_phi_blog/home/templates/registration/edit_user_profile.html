@@ -1,0 +1,56 @@
+{% extends 'base_menu.html' %}
+{% block title %} Edit Profile {% endblock %}
+{% block content %}
+
+{% if user.is_authenticated %}
+    {% if user.id == profile.user.id %}
+    <div class="form-group">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="btn btn-primary" type="submit">Save Changes</button>
+            <button class="btn btn-danger" type="button" onclick="saveCurrent('{% url 'save_json' profile.user.id %}')">Save</button>
+        </form>
+    </div>
+    {% else %}
+    <h1>You're not the correct user to modify this page</h1>
+    {% endif %}
+{% else %}
+<h1>You cannot be here...</h1>
+{% endif %}
+
+<script>
+    function saveCurrent(url){
+
+    console.log('Url is: ' + url);
+
+    textarea = document.getElementsByTagName("textarea");
+
+    console.log("changed finally");
+    console.log(textarea[0].value);
+
+    let json = {};
+
+    fetch(url, {method: 'POST',
+         body: JSON.stringify({
+            fun : "bun"
+         }),
+         headers : {
+            "Content-type" : "application/json; charset=UTF-8"
+            }}).
+    then(r => r.json())
+    .then(l => {
+    console.log("nh");
+    json = l;
+    }).catch(error => {
+    console.log(error);});
+
+    setTimeout(()=>{
+    console.log(json);
+    }
+    , 1000);
+
+    }
+</script>
+
+{% endblock %}

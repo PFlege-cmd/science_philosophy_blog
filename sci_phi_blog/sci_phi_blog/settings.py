@@ -9,8 +9,10 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+import os
 import os.path
 from pathlib import Path
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -153,4 +155,4 @@ AUTHENTICATION_BACKENDS = (
 
 LOGIN_URL = '/user/login'
 LOGIN_REDIRECT_URL ='/about/'
-LOGOUT_REDIRECT_URL ='/'
+LOGOUT_REDIRECT_URL ='/about/'

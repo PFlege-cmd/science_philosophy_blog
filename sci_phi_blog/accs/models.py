@@ -1,5 +1,6 @@
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.db import models
+from django.urls import reverse
 from ckeditor.fields import RichTextField
 
 
@@ -62,6 +63,9 @@ class Profile(models.Model):
     instagram_url = models.CharField(max_length=255, null=True, blank=True)
 
     picture = models.ImageField(null=True, blank=True, upload_to='media/images/profiles/')
+
+    def get_absolute_url(self):
+        return reverse('profile_page', kwargs={'pk': self.pk})
 
 
 

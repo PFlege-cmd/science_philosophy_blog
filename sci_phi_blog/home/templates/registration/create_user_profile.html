@@ -1,0 +1,20 @@
+{% extends 'base_menu.html' %}
+{% load static %}
+{% block title %} Create Profile {% endblock %}
+{% block content %}
+{% if user.is_authenticated %}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="form-group">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-danger">Create Profile</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% else %}
+<h3>Login first to create a profile</h3>
+{% endif %}
+{% endblock %}

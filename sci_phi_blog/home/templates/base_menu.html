@@ -10,7 +10,7 @@ Kermeline...
         <a class="navbar-brand" href="/">{{ settings.APP_NAME }}</a>
     </div>
     <!-- https://stackoverflow.com/questions/22047251/django-dynamically-get-view-url-and-check-if-its-the-current-page -->
-    <ul class="nav navbar-nav">
+    <ul class="nav navbar-nav mr-auto">
         <li {% if request.get_full_path == ads %}class="active nav-item"{% endif %}>
           <a href="{% url 'about' %}">About</a></li>
     </ul>
@@ -22,8 +22,31 @@ Kermeline...
             <a href="{% url 'arts:languages' %}">Languages</a>
         </li>
         {% if user.is_authenticated %}
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle"
+               href="#"
+               id="navbarDropdown"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false">
+                Profile
+            </a>
+
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                {% if user.profile.id %}
+                <a class="dropdown-item" href="{% url 'edit_user' %}">Edit Settings</a>
+                <a class="dropdown-item" href="{% url 'edit_profile_page' user.profile.id %}">Edit Profile Page</a>
+                <a class="dropdown-item" href="{% url 'profile_page' user.profile.id%}">Show Profile Page</a>
+                {% else %}
+                <a class="dropdown-item" href="{% url 'create_profile' %}">Create Profile</a>
+                {% endif %}
+            </div>
+        </li>
+        {% endif %}
+        {% if user.is_authenticated %}
         <li class="nav-item">
-        <a href="arts:create_article">Create Article</a>
+        <a href="{% url 'arts:create_article' %}">Create Article</a>
         </li>
         <li class="nav-item">
             <div>
@@ -48,14 +71,14 @@ Kermeline...
                 <li><a href="#">Learn more</a></li>
             </ul>
         </li>
-        {% else %}
-        <li>
-        <a href="{% url 'login' %}?next=#">Login</a>
-        </li>
-        <li>
-            <a href="{% url 'register' %}?next={% url 'login' %}">Register</a>
-        </li>
-        {% endif %}
+            {% else %}
+            <li>
+            <a href="{% url 'login' %}?next=#">Login</a>
+            </li>
+            <li>
+                <a href="{% url 'register' %}?next={% url 'login' %}">Register</a>
+            </li>
+            {% endif %}
     </ul>
   </div>
 </nav>

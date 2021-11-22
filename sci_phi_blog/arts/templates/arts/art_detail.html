@@ -23,7 +23,20 @@
 <div class="w-100"></div>
 <div id="personal" class="col-xs-12">
     {% if art.author.profile %}
-    <img src="/{{art.author.profile.picture}}" alt="A pic" class="rounded-circle" width="100" height="100">
+        <a href="{% url 'profile_page' art.author.id %}">Profile</a> |
+        {% if art.author.profile.facebook_url %}
+        <a href="art.author.profile.facebook_url">Facebook</a> |
+        {% endif %}
+        {% if art.author.profile.twitter_url %}
+        <a href="art.author.profile.twitter_url">Twitter</a> |
+        {% endif %}
+        {% if art.author.profile.instagram_url %}
+        <a href="art.author.profile.instagram_url">Instagram</a> |
+        {% endif %}
+    <img src="{% static '{{art.author.profile.picture}}' %}" alt="A pic" class="rounded-circle" width="100" height="100">
+    <div>
+        <p>{{art.author.profile.bio| safe}}</p>
+    </div>
     {% else %}
     <img src="{% static 'images/unknown_user.png' %}" alt="A pic" class="rounded-circle" width="100" height="100">
     {% endif %}
