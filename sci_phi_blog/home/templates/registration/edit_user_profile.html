@@ -10,6 +10,8 @@
             {{ form.as_p }}
             <button class="btn btn-primary" type="submit">Save Changes</button>
             <button class="btn btn-danger" type="button" onclick="saveCurrent('{% url 'save_json' profile.user.id %}')">Save</button>
+            <button class="btn btn-danger" type="button" onclick="restoreProfile({{profile.id}})">Restore</button>
+
         </form>
     </div>
     {% else %}
@@ -20,36 +22,67 @@
 {% endif %}
 
 <script>
+
+    document.addEventListener('DOMContentLoaded', function(){
+
+    let id = String(window.location.pathname).substring(6, 7);
+
+    setInterval(() => {
+        localStorage.setItem(id, JSON.stringify(getProfileData(id)));
+    }, 1000);
+
+    });
+
+
+
+    function getProfileData(id){
+
+        id = id;
+        bio = document.getElementById('id_bio');
+        picture = document.getElementById('id_picture');
+        facebook_url = document.getElementById('id_facebook_url');
+        twitter_url = document.getElementById('id_twitter_url');
+        instagram_url = document.getElementById('id_instagram_url');
+
+    return {
+        id : id,
+        bio : bio.value,
+        picture : picture.value,
+        facebook_url : facebook_url.value,
+        twitter_url : twitter_url.value,
+        instagram_url : instagram_url.value
+        };
+
+    }
+
+
     function saveCurrent(url){
 
-    console.log('Url is: ' + url);
+        let id = String(window.location.pathname).substring(6, 7);
+        let json = getProfileData(id);
 
-    textarea = document.getElementsByTagName("textarea");
+        fetch(url, {method: 'POST',
+             body: JSON.stringify(json),
+             headers : {
+                "Content-type" : "application/json; charset=UTF-8"
+                }}).
+        then(r => r.json())
+        .then(l => {
+        console.log("nh");
+        json = l;
+        }).catch(error => {
+        console.log(error);});
 
-    console.log("changed finally");
-    console.log(textarea[0].value);
+        setTimeout(()=>{
+                console.log(json);
+            }
+        , 1000);
 
-    let json = {};
-
-    fetch(url, {method: 'POST',
-         body: JSON.stringify({
-            fun : "bun"
-         }),
-         headers : {
-            "Content-type" : "application/json; charset=UTF-8"
-            }}).
-    then(r => r.json())
-    .then(l => {
-    console.log("nh");
-    json = l;
-    }).catch(error => {
-    console.log(error);});
-
-    setTimeout(()=>{
-    console.log(json);
     }
-    , 1000);
 
+    function restoreProfile(id){
+        let profile = JSON.parse(localStorage.getItem(id));
+        console.log("Json is: " + profile.bio);
     }
 </script>
 
