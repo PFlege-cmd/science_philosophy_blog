@@ -35,9 +35,9 @@ Kermeline...
 
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                 {% if user.profile.id %}
-                <a class="dropdown-item" href="{% url 'edit_user' %}">Edit Settings</a>
-                <a class="dropdown-item" href="{% url 'edit_profile_page' user.profile.id %}">Edit Profile Page</a>
-                <a class="dropdown-item" href="{% url 'profile_page' user.profile.id%}">Show Profile Page</a>
+                <a class="dropdown-item" href="{% url 'edit_user' %}">Edit Settings<br/></a>
+                <a class="dropdown-item" href="{% url 'edit_profile_page' user.profile.id %}">Edit Profile Page<br/></a>
+                <a class="dropdown-item" href="{% url 'profile_page' user.profile.id%}">Show Profile Page<br/></a>
                 {% else %}
                 <a class="dropdown-item" href="{% url 'create_profile' %}">Create Profile</a>
                 {% endif %}
