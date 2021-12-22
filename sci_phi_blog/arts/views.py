@@ -1,11 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy, reverse, resolve
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
-from .models import Article, Languages, Categories
-from .forms import ArticleForm
+from .models import Article, Languages, Categories, Response
+from .forms import ArticleForm, ResponseForm
 
 
 class ArticleCreateView(CreateView, LoginRequiredMixin):
@@ -57,13 +57,20 @@ class ArticleDetailView(LoginRequiredMixin, DetailView):
 
     def get(self, request, **kwargs):
         art = Article.objects.get(id=self.kwargs.get('pk'))
-        ctx = {"art" : art}
+        print(art.response_comments.all())
+        ctx = {"art" : art, "resp_form" : ResponseForm(), "responses": art.response_comments.all()}
         return render(request, self.template_name, ctx)
 
 class ArticleUpdateView(LoginRequiredMixin, UpdateView):
     model = Article
     template_name =  'arts/art_update.html'
     form_class = ArticleForm
+
+    def get_form_kwargs(self):
+        kwargs = super(ResponseView, self).get_form_kwargs()
+        print("kwargs are: " + str(kwargs))
+        kwargs['user_to_add'] = self.request.user
+        return kwargs
 
     def get(self, request, pk=None):
         art = get_object_or_404(Article, id=pk, author=self.request.user)
@@ -100,9 +107,90 @@ class ArticleDeleteView(LoginRequiredMixin, DeleteView):
         qs = super(DeleteView, self).get_queryset()
         return qs.filter(author=self.request.user)
 
-#class CategoryView(LoginRequiredMixin, ListView):
-#    model = Languages;
-#    template_name = "arts/category_list.html"
+class ResponseView(LoginRequiredMixin, CreateView):
+    model = Response
+    form_class = ResponseForm
+
+    def get_form_kwargs(self):
+        kwargs = super(ResponseView, self).get_form_kwargs()
+        print("kwargs are: " + str(kwargs))
+        kwargs['user_to_add'] = self.request.user
+        return kwargs
+
+    def post(self, request, pk):
+        form = ResponseForm(request.POST)
+        if form.is_valid():
+            response = form.save(commit=False)
+            print("Post is:"  + str(request.POST))
+            response.author = self.request.user;
+            print(self.kwargs)
+            to_article = get_object_or_404(Article, id = pk)
+            response.response_to_article = to_article
+            response.save()
+            print("Body is:"  + str(response.body))
+
+            #return redirect(reverse_lazy("arts:article", kwargs={'pk': pk}))
+            return redirect(response.response_to_article.get_absolute_url())
+
+        else:
+            return HttpResponse("Invalid")
+
+class ResponseUpdateView(ResponseView):
+    form_class = ResponseForm
+    model = Response
+    template_name = "arts/response_update.html"
+
+    def get(self, request, **kwargs):
+        print("Second key is: " + str(kwargs['pk_2']))
+        response = get_object_or_404(Response, id=kwargs['pk_2'])
+        form = ResponseForm(instance=response)
+        print("form is: " + str(form))
+        return render(request, self.template_name, {"form": form})
+
+
+    def post(self, request, **kwargs):
+        print("hey");
+        article = get_object_or_404(Article, id=kwargs['pk']);
+        form = ResponseForm(request.POST);
+        if form.is_valid():
+            response = get_object_or_404(Response, id=kwargs['pk_2'])
+            response.body = form.cleaned_data['body'];
+            response.save();
+            return redirect(reverse_lazy("arts:article", kwargs = {"pk" : kwargs['pk']}))
+        else:
+            return HttpResponse(reverse_lazy("arts:article", kwargs = {"pk" : kwargs['pk']}))
+
+    def form_valid(self, form):
+        ## ONLY called when the view does not have any default implementation of POST or GET
+        print("BIG MOM")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        print("KAIDO")
+        return HttpResponse("FORM IS INVALID FOOL")
+
+class ResponseDeleteView(DeleteView):
+    model = Response
+    template_name = "arts/response_delete_confirm.html"
+
+    def get_success_url(self, pk):
+
+        return reverse_lazy("arts:article", kwargs = {"pk" : pk})
+
+    def post(self, request, **kwargs):
+        resp = Response.objects.get(id=kwargs['pk_2'])
+        resp.delete()
+        print("Delete article of id: " + str(kwargs['pk_2']))
+        ###WHY THE FUCK DOES THIS WHOLE KEYWORD ISSUE NOT WORK??
+        ### APARENTLY, PK's in URLS are KEYWORD WITH DICTIONARY OF VALUES
+        return redirect(self.get_success_url(kwargs['pk']))
+
+
+    def get(self, request, **kwargs):
+        print("Getting...")
+        return render(request, self.template_name, {})
+
+
 
 def show_categories(request):
 
@@ -112,8 +200,8 @@ def show_categories(request):
     for cat in cats:
         cats_list.append(cat[0])
 
-    ctx = {"categories": cats_list}
-    return render(request, 'arts/category_list.html', ctx)
+    ctx = {"enums": cats_list}
+    return render(request, 'arts/enum_list.html', ctx)
 
 def show_languages(request):
     langs = Languages.choices()
@@ -122,23 +210,41 @@ def show_languages(request):
     for lang in langs:
         lang_list.append(lang[0])
 
-    ctx = {"languages": lang_list}
-    return render(request, 'arts/language_list.html', ctx)
+
+    ctx = {"enums": lang_list}
+    return render(request, 'arts/enum_list.html', ctx)
 
 class ArticleByLanguageView(ListView):
     model = Article
 
     def get(self, request, lang):
-        articles_with_language = Article.objects.filter(language=lang)
-        article_list = []
+        print(lang)
+        for choice in Languages.choices():
+            if lang == choice[0]:
+                articles_with_language = Article.objects.filter(language=lang)
+                article_list = []
 
-        for article in articles_with_language:
-            article_dict = {}
-            article_dict["id"] = article.id
-            article_dict["title"] = article.title
-            article_list.append(article_dict);
+                for article in articles_with_language:
+                    article_dict = {}
+                    article_dict["id"] = article.id
+                    article_dict["title"] = article.title
+                    article_list.append(article_dict);
 
-        return JsonResponse(article_list, safe=False)
+                return JsonResponse(article_list, safe=False)
+
+        for choice in Categories.choices():
+            if lang == choice[0]:
+                articles_with_category = Article.objects.filter(category=lang)
+                article_list = []
+
+                for article in articles_with_category:
+                    article_dict = {}
+                    article_dict["id"] = article.id
+                    article_dict["title"] = article.title
+                    article_list.append(article_dict);
+
+                return JsonResponse(article_list, safe=False)
+
 
 
 

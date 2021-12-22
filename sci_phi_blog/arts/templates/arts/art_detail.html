@@ -42,4 +42,21 @@
     {% endif %}
 </div>
     </div>
+    <form action="{% url 'arts:comment_article' art.pk %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ resp_form.as_p }}
+    <input type="submit" value="Post comment">
+    </form>
+{% for resp in responses %}
+<p><div style="border: solid;
+    border-width: 1px;
+    height: 20px;">{{resp.body}}</div>
+    <br>
+    by: {{resp.author }}
+    </p>
+    {% if user == resp.author %}
+        <a href="{% url 'arts:update_comment' art.id resp.id %}">Edit</a>
+        <a href="{% url 'arts:delete_comment' art.id resp.id %}">Delete</a>
+    {% endif %}
+{% endfor %}
 {% endblock %}

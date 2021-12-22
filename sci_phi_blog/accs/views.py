@@ -15,8 +15,8 @@ import json
 
 class CreateUserProfileView(CreateView):
     model = Profile
-    fields = ['bio', 'picture', 'facebook_url', 'twitter_url', 'instagram_url']
     template_name = 'registration/create_user_profile.html'
+    form_class = UserProfileForm
 
     def form_valid(self, form):
         form.instance.user = self.request.user;
@@ -47,7 +47,7 @@ class UserProfileView(DetailView):
 class EditUserProfileView(UpdateView):
     model = Profile
     template_name = "registration/edit_user_profile.html"
-    fields = ['bio', 'picture', 'facebook_url', 'twitter_url', 'instagram_url']
+    form_class = UserProfileForm
     success_url = reverse_lazy('home')
 
 class EditUserProfileSettingsView(UpdateView):

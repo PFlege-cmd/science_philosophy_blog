@@ -4,6 +4,8 @@ from enum import Enum
 from ckeditor.fields import RichTextField
 
 from accs.models import Account
+from django.urls import reverse_lazy
+
 
 class Languages(Enum):
     ENGLISH = 'English'
@@ -27,6 +29,13 @@ class Categories(Enum):
     def choices(cls):
         return [(key.value, key.name) for key in cls]
 
+    @classmethod
+    def lang_choice(cls, lang: str) -> bool:
+        if lang in cls.value:
+            return True
+        else:
+            return False
+
 
 class Article(models.Model):
     title = models.CharField(null=False,
@@ -44,6 +53,9 @@ class Article(models.Model):
     responses = models.ManyToManyField(Account, through='Response', related_name="responded_to")
     snippet = models.CharField(max_length=255)
 
+    def get_absolute_url(self):
+        return reverse_lazy("arts:article", kwargs={'pk':self.pk});
+
 
 class Picture(models.Model):
 
@@ -58,5 +70,7 @@ class Response(models.Model):
     last_edited = models.DateTimeField(verbose_name="last edited", auto_now=True)
     author = models.ForeignKey(Account, related_name="responses", null=False, on_delete=models.CASCADE)
     response_to_response = models.ForeignKey('self', related_name="responded_by", null=True, on_delete=models.CASCADE)
-    response_to_article = models.ForeignKey(Article, null = True, on_delete=models.CASCADE)
+    response_to_article = models.ForeignKey(Article, related_name="response_comments", on_delete=models.CASCADE)
+
+
 
