@@ -70,7 +70,7 @@ class Response(models.Model):
     last_edited = models.DateTimeField(verbose_name="last edited", auto_now=True)
     author = models.ForeignKey(Account, related_name="responses", null=False, on_delete=models.CASCADE)
     response_to_response = models.ForeignKey('self', related_name="responded_by", null=True, on_delete=models.CASCADE)
-    response_to_article = models.ForeignKey(Article, related_name="response_comments", on_delete=models.CASCADE)
+    response_to_article = models.ForeignKey(Article, related_name="response_comments", null=True, on_delete=models.CASCADE)
 
 
 

@@ -1,8 +1,10 @@
+import json
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.urls import reverse_lazy, reverse, resolve
 from django.shortcuts import render, redirect, get_object_or_404
+from django.views import View
 from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
 from .models import Article, Languages, Categories, Response
 from .forms import ArticleForm, ResponseForm
@@ -58,7 +60,14 @@ class ArticleDetailView(LoginRequiredMixin, DetailView):
     def get(self, request, **kwargs):
         art = Article.objects.get(id=self.kwargs.get('pk'))
         print(art.response_comments.all())
-        ctx = {"art" : art, "resp_form" : ResponseForm(), "responses": art.response_comments.all()}
+        article_comments_with_responses = []
+        for resp in art.response_comments.all():
+            article_comments_with_responses.append(
+                {"response" : resp,
+                 "commented" : len(resp.responded_by.all()) > 0
+                 }
+            )
+        ctx = {"art" : art, "resp_form" : ResponseForm(), "responses": article_comments_with_responses}
         return render(request, self.template_name, ctx)
 
 class ArticleUpdateView(LoginRequiredMixin, UpdateView):
@@ -173,9 +182,9 @@ class ResponseDeleteView(DeleteView):
     model = Response
     template_name = "arts/response_delete_confirm.html"
 
-    def get_success_url(self, pk):
-
-        return reverse_lazy("arts:article", kwargs = {"pk" : pk})
+    def get_success_url(self, **keyword_arguments):
+        ## I got it... kwargs is here than the name of a dict for all named ones :)
+        return reverse_lazy("arts:article", kwargs = {"pk" : keyword_arguments['pk']})
 
     def post(self, request, **kwargs):
         resp = Response.objects.get(id=kwargs['pk_2'])
@@ -183,14 +192,49 @@ class ResponseDeleteView(DeleteView):
         print("Delete article of id: " + str(kwargs['pk_2']))
         ###WHY THE FUCK DOES THIS WHOLE KEYWORD ISSUE NOT WORK??
         ### APARENTLY, PK's in URLS are KEYWORD WITH DICTIONARY OF VALUES
-        return redirect(self.get_success_url(kwargs['pk']))
+        return redirect(self.get_success_url(pk = kwargs['pk']))
 
 
     def get(self, request, **kwargs):
         print("Getting...")
         return render(request, self.template_name, {})
 
+class ResponseToResponseView(View):
+    def post(self, request, **kwargs):
 
+        print("In post")
+        print("cookies are: " + str(request.COOKIES))
+        print("body is: " + str(request.body))
+        print("POST is: " + str(request.POST))
+        data = json.loads(request.body)
+        print("ID is: " + str(kwargs['pk']))
+        print("data is: " + str(data['content']))
+
+        target_response = get_object_or_404(Response, id=kwargs['pk'])
+
+        response = Response(body=data['content'], author=self.request.user, response_to_response=target_response)
+        response.save()
+
+        return JsonResponse({"post": "post"})
+
+    def get(self, request, **kwargs):
+        return JsonResponse({"get": "get"})
+
+class ShowResponsesToResponseView(View):
+    def get(self, request, **kwargs):
+        print("Start")
+        response = get_object_or_404(Response, id=kwargs['pk'])
+        all_responses = response.responded_by.all();
+        all_responses_list = []
+        for resp in all_responses:
+            all_responses_list.append(
+                {
+                    "body": resp.body,
+                    "id": resp.id,
+                    "commented" : len(resp.responded_by.all()) > 0
+                }
+            )
+        return JsonResponse(data=all_responses_list, safe=False)
 
 def show_categories(request):
 

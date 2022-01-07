@@ -48,15 +48,113 @@
     <input type="submit" value="Post comment">
     </form>
 {% for resp in responses %}
-<p><div style="border: solid;
-    border-width: 1px;
-    height: 20px;">{{resp.body}}</div>
-    <br>
-    by: {{resp.author }}
-    </p>
+<div style="border: solid;
+    border-width: 1px;">
+        <p>{{resp.response.body}}</p>
+            <br>
+        <p>by: {{resp.response.author }}</p>
+    </div>
+    <div id="response_{{resp.response.id}}">
     {% if user == resp.author %}
-        <a href="{% url 'arts:update_comment' art.id resp.id %}">Edit</a>
-        <a href="{% url 'arts:delete_comment' art.id resp.id %}">Delete</a>
-    {% endif %}
+        <a href="{% url 'arts:update_comment' art.id resp.response.id %}">Edit</a>
+        <a href="{% url 'arts:delete_comment' art.id resp.response.id %}">Delete</a>
+        {% else %}
+        <button class="btn btn-primary" onclick="createCommentForm({{resp.response.id}}, '{% url 'arts:delete_comment' art.id resp.response.id %}')">Comment</button>
+        {% endif %}
+        {% if resp.commented %}
+        <a href="#" onclick="{ fetchResponses({{resp.response.id}}); return false;}"><b>show comments</b></a>
+        {% endif %}
+    </div>
 {% endfor %}
+
+<script>
+
+    function getCSRFToken(){
+        let cookies = document.cookie.split(";")
+                .map(c => c.trim())
+                .filter(c => c.startsWith("csrftoken="));
+            let csrf_token = decodeURIComponent(cookies[0].split("=")[1])
+            return csrf_token;
+    }
+
+    function createHeaders(){
+        return {
+            'Content-Type' :'application/json; charset=UTF-8',
+            'X-CSRFToken' : getCSRFToken()
+        }
+    }
+
+    function sendComment(id){
+
+        let form = document.getElementById(`response_form_${id}`);
+
+        const headers = createHeaders();
+
+        fetch(`http://127.0.0.1:8000/articles/article/response_to_response/${id}`, {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify({
+                'content': form.children[0].value
+            })
+            }).then( r => {
+                console.log("Response is: " + r);
+                return r.json();
+            })
+            .then(
+                r => console.log(r.post)
+            )
+            .catch(error => {
+                console.log(error);
+            });
+
+            form.remove()
+    }
+
+    function createCommentForm(id, url){
+        let doesFormExist = !!document.getElementById(`response_form_${id}`);
+
+        if (doesFormExist){
+            return;
+        }
+
+        let current_response = document.getElementById(`response_${id}`);
+
+        const commentForm = document.createElement("form");
+        commentForm.setAttribute("method","post");
+        commentForm.setAttribute("action","");
+        commentForm.setAttribute("id", `response_form_${id}`)
+
+        textArea = document.createElement("textarea");
+        textArea.setAttribute("placeholder","Type your comment!");
+
+        submit = document.createElement("input");
+        submit.setAttribute("type","button");
+        submit.setAttribute("value","Send");
+
+        commentForm.appendChild(textArea);
+        commentForm.appendChild(submit);
+
+        current_response.appendChild(commentForm);
+        submit.setAttribute("onclick", `sendComment(${id});return false;`);
+
+        //sendComment(id);
+    }
+
+    function fetchResponses(id, url){
+        console.log("click");
+        let cid = 3
+        let response_url = "{% url 'arts:all_responses_to_response' 111 %}";
+        new_url= response_url.replace('111',id);
+        console.log(new_url);
+
+        fetch(new_url, {
+            method : "GET"
+        }).then(r => r.json())
+        .then(json => json.forEach(j =>
+             console.log(j)
+             ))
+        .catch(error => console.log(error));
+    }
+</script>
+
 {% endblock %}
