@@ -49,13 +49,11 @@
     </form>
 {% for resp in responses %}
 <div style="border: solid;
-    border-width: 1px;">
+    border-width: 1px;" id="response_{{resp.response.id}}">
         <p>{{resp.response.body}}</p>
             <br>
         <p>by: {{resp.response.author }}</p>
-    </div>
-    <div id="response_{{resp.response.id}}">
-    {% if user == resp.author %}
+        {% if user == resp.author %}
         <a href="{% url 'arts:update_comment' art.id resp.response.id %}">Edit</a>
         <a href="{% url 'arts:delete_comment' art.id resp.response.id %}">Delete</a>
         {% else %}
@@ -68,6 +66,64 @@
 {% endfor %}
 
 <script>
+
+const responseFactory = function(){
+        this.createElement = function(type, body, id, commented){
+            var responseElement;
+
+            if (type === "response"){
+                responseElement = new CommentResponse();
+                responseElement.type = type
+                responseElement.id = `response_${id}`;
+                responseElement.body = body;
+                responseElement.commented = commented;
+
+            } else if (type === "form"){
+                responseElement.type = type
+                responseElement.id = `response_form_${id}`;
+                responseElement.body = body;
+                responseElement.commented = commented;
+            }
+
+            responseElement.create = function(){
+                if (this.type === "response"){
+                    div = document.createElement("div");
+                    div.setAttribute("id", this.id);
+                    p_body = document.createElement("p");
+                    p_author = document.createElement("p");
+                    p_body.textContent = this.body;
+                    p_author.textContent = "by: " + "Jesus";
+                    button = document.createElement("button");
+                    button.setAttribute("class", "btn btn-primary");
+                    button_text = document.createTextNode("Comment");
+                    button.appendChild(button_text);
+
+                    div.appendChild(p_body);
+                    div.appendChild(document.createElement("br"))
+                    div.appendChild(p_author);
+
+                    div.appendChild(button);
+                    if (this.commented === true){
+                        b = document.createElement("b");
+                        a = document.createElement("a");
+                        a.setAttribute("href", "#");
+                        a_text = document.createTextNode("Show comments");
+                        a.appendChild(a_text);
+                        b.appendChild(a)
+                        div.appendChild(b);
+                    }
+                    div.style.border = "solid";
+                    div.style.borderWidth = "1px";
+                    return div;
+                }
+            }
+            return responseElement.create()
+        }
+    }
+
+    const CommentResponse = function () {
+        this.type = "response";
+    };
 
     function getCSRFToken(){
         let cookies = document.cookie.split(";")
@@ -134,6 +190,7 @@
         commentForm.appendChild(textArea);
         commentForm.appendChild(submit);
 
+
         current_response.appendChild(commentForm);
         submit.setAttribute("onclick", `sendComment(${id});return false;`);
 
@@ -142,6 +199,7 @@
 
     function fetchResponses(id, url){
         console.log("click");
+        let current_response = document.getElementById(`response_${id}`);
         let cid = 3
         let response_url = "{% url 'arts:all_responses_to_response' 111 %}";
         new_url= response_url.replace('111',id);
@@ -150,11 +208,18 @@
         fetch(new_url, {
             method : "GET"
         }).then(r => r.json())
-        .then(json => json.forEach(j =>
-             console.log(j)
+        .then(json => json.forEach(j => {
+                console.log(j);
+                div = new responseFactory().createElement("response", j.body, 12, true);
+                console.log(div);
+                current_response.appendChild(div);
+                }
              ))
         .catch(error => console.log(error));
     }
+
+
+
 </script>
 
 {% endblock %}
