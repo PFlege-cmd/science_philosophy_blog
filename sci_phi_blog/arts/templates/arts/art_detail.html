@@ -6,7 +6,7 @@
 
 {% block content %}
 <div class="row" style="width: 100%;">
-<div class="col-xs-12">
+<div class="col-xs-12 article"  id="{{art.id}}">
     <h3>{{ art.title }}</h3>
     by: {{ art.author.username }}
     <br/>
@@ -73,14 +73,13 @@ const responseFactory = function(){
 
             if (type === "response"){
                 responseElement = new CommentResponse();
-                responseElement.type = type
                 responseElement.id = `response_${id}`;
                 responseElement.body = body;
                 responseElement.commented = commented;
 
             } else if (type === "form"){
-                responseElement.type = type
-                responseElement.id = `response_form_${id}`;
+                responseElement = new CommentForm();
+                responseElement.id = `${id}`;
                 responseElement.body = body;
                 responseElement.commented = commented;
             }
@@ -97,6 +96,9 @@ const responseFactory = function(){
                     button.setAttribute("class", "btn btn-primary");
                     button_text = document.createTextNode("Comment");
                     button.appendChild(button_text);
+                    button.setAttribute("onclick", `createCommentForm(${id})`);
+
+                    // add new button to remove via remove(this) and subsequent implementation
 
                     div.appendChild(p_body);
                     div.appendChild(document.createElement("br"))
@@ -107,6 +109,7 @@ const responseFactory = function(){
                         b = document.createElement("b");
                         a = document.createElement("a");
                         a.setAttribute("href", "#");
+                        a.setAttribute("onclick",`{fetchResponses(${id}); return false;}`)
                         a_text = document.createTextNode("Show comments");
                         a.appendChild(a_text);
                         b.appendChild(a)
@@ -115,6 +118,24 @@ const responseFactory = function(){
                     div.style.border = "solid";
                     div.style.borderWidth = "1px";
                     return div;
+                } else if (this.type === "form"){
+                    console.log("I am formed!");
+                    const commentForm = document.createElement("form");
+                    commentForm.setAttribute("method","post");
+                    commentForm.setAttribute("action","");
+                    commentForm.setAttribute("id", `response_form_${id}`)
+
+                    textArea = document.createElement("textarea");
+                    textArea.setAttribute("placeholder","Type your comment!");
+
+                    submit = document.createElement("input");
+                    submit.setAttribute("type","button");
+                    submit.setAttribute("value","Send");
+
+                    commentForm.appendChild(textArea);
+                    commentForm.appendChild(submit);
+                    submit.setAttribute("onclick", `sendComment(${this.id});return false;`);
+                    return commentForm;
                 }
             }
             return responseElement.create()
@@ -124,6 +145,10 @@ const responseFactory = function(){
     const CommentResponse = function () {
         this.type = "response";
     };
+
+    const CommentForm = function(){
+        this.type = "form";
+    }
 
     function getCSRFToken(){
         let cookies = document.cookie.split(";")
@@ -174,35 +199,16 @@ const responseFactory = function(){
         }
 
         let current_response = document.getElementById(`response_${id}`);
-
-        const commentForm = document.createElement("form");
-        commentForm.setAttribute("method","post");
-        commentForm.setAttribute("action","");
-        commentForm.setAttribute("id", `response_form_${id}`)
-
-        textArea = document.createElement("textarea");
-        textArea.setAttribute("placeholder","Type your comment!");
-
-        submit = document.createElement("input");
-        submit.setAttribute("type","button");
-        submit.setAttribute("value","Send");
-
-        commentForm.appendChild(textArea);
-        commentForm.appendChild(submit);
-
-
+        commentForm = new responseFactory().createElement("form", undefined, id, undefined);
         current_response.appendChild(commentForm);
-        submit.setAttribute("onclick", `sendComment(${id});return false;`);
-
-        //sendComment(id);
     }
 
     function fetchResponses(id, url){
         console.log("click");
         let current_response = document.getElementById(`response_${id}`);
         let cid = 3
-        let response_url = "{% url 'arts:all_responses_to_response' 111 %}";
-        new_url= response_url.replace('111',id);
+        //let response_url = "{% url 'arts:all_responses_to_response' 111 %}";
+        new_url= createResponseUrl(id);
         console.log(new_url);
 
         fetch(new_url, {
@@ -210,12 +216,22 @@ const responseFactory = function(){
         }).then(r => r.json())
         .then(json => json.forEach(j => {
                 console.log(j);
-                div = new responseFactory().createElement("response", j.body, 12, true);
+                div = new responseFactory().createElement("response", j.body, j.id, j.commented);
                 console.log(div);
                 current_response.appendChild(div);
                 }
              ))
         .catch(error => console.log(error));
+    }
+
+    const createResponseUrl = function(id){
+        let templateUrl = "{% url 'arts:all_responses_to_response' 111 %}";
+        return templateUrl.replace('111',id);
+    }
+
+    const createDeleteUrl = function(resp_id){
+        let article = document.getElementsByClassName("article")[0];
+        console.log("Id of article is: " + article.id);
     }
 
 
